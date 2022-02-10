@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shopon/screens/products_overview_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,12 +13,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: "Shop On",
+      title: "ShopOn",
       theme: ThemeData(
-        primarySwatch: Colors.amber,
-        accentColor: Colors.black,
-      ),
-      home: HomePage(),
+          primarySwatch: Colors.teal,
+          accentColor: Colors.deepOrange,
+          fontFamily: "Lato"),
+      home: ProductsOverviewScreen(),
     );
   }
 }
