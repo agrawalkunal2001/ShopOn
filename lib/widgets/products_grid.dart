@@ -11,8 +11,9 @@ class ProductsGrid extends StatelessWidget {
     final productData = products.items;
     return GridView.builder(
       itemCount: productData.length,
-      itemBuilder: (ctx, index) => ChangeNotifierProvider(
-        create: (ctx) => productData[index],
+      itemBuilder: (ctx, index) => ChangeNotifierProvider.value(
+        value: productData[
+            index], // .value is used on a provider which involves list or a grid which recycles the view.
         child: ProductItem(
             /*productData[index].id, productData[index].title,
             productData[index].imageURL*/
