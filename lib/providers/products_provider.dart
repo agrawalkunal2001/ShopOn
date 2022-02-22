@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shopon/models/product.dart';
+import 'package:shopon/providers/product.dart';
 
 class ProductsProvider
     with /* Mixins or inheritance lite. It is like extending from a class. The difference is that we simply merge some properties or methods into existing class but does not return an instance of the inherited class.*/ ChangeNotifier /* It is related to Inherited widget which the provider package uses bts. Inherited widget establishes bts communication tunnels using context*/ {
@@ -43,6 +43,10 @@ class ProductsProvider
       ..._items
     ]; // Copy of _items so that we do not directly edit the original list
   } // Adding getter method as _items is a private property which cannot be accessed from outised this class
+
+  Product findItemById(String id) {
+    return _items.firstWhere((element) => element.id == id);
+  }
 
   void addProducts() {
     // _items.add(value);

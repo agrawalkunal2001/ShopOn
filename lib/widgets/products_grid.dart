@@ -11,11 +11,13 @@ class ProductsGrid extends StatelessWidget {
     final productData = products.items;
     return GridView.builder(
       itemCount: productData.length,
-      itemBuilder: (ctx, index) => ProductItem(
-          productData[index].id,
-          productData[index].title,
-          productData[index]
-              .imageURL), // It defines how the grid should look like.
+      itemBuilder: (ctx, index) => ChangeNotifierProvider(
+        create: (ctx) => productData[index],
+        child: ProductItem(
+            /*productData[index].id, productData[index].title,
+            productData[index].imageURL*/
+            ),
+      ), // It defines how the grid should look like.
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           childAspectRatio: 3 / 2,
