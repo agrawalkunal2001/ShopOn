@@ -27,6 +27,7 @@ class ProductItem extends StatelessWidget {
       footer: GridTileBar(
         backgroundColor: Colors.black54,
         leading: Consumer<Product>(
+          // It is just like provider.of which is used to rebuild just a small widget
           builder: (ctx, product, child) => IconButton(
               icon: Icon(
                   product.isFavourite
@@ -36,6 +37,8 @@ class ProductItem extends StatelessWidget {
               onPressed: () {
                 product.toggleFavourite();
               }),
+          child: Text(
+              "Never changes!"), // It is the third argument in the builder method. It never changes.
         ),
         title: Text(
           product.title,

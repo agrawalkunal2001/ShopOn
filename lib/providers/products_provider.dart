@@ -44,6 +44,10 @@ class ProductsProvider
     ]; // Copy of _items so that we do not directly edit the original list
   } // Adding getter method as _items is a private property which cannot be accessed from outised this class
 
+  List<Product> get favouriteItems {
+    return _items.where((element) => element.isFavourite).toList();
+  }
+
   Product findItemById(String id) {
     return _items.firstWhere((element) => element.id == id);
   }
