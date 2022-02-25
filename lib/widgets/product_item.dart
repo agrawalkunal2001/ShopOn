@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shopon/providers/product.dart';
+import 'package:shopon/providers/products_cart.dart';
 import 'package:shopon/screens/product_detail_screen.dart';
 
 class ProductItem extends StatelessWidget {
@@ -13,6 +14,9 @@ class ProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final product = Provider.of<Product>(context);
+    final cart = Provider.of<ProductsCart>(context,
+        listen:
+            false /* We do not want to rebuild this widget when cart provider updates*/);
     return GridTile(
       child: GestureDetector(
         onTap: () {
@@ -44,10 +48,17 @@ class ProductItem extends StatelessWidget {
           product.title,
           textAlign: TextAlign.center,
         ),
-        trailing: IconButton(
-            icon:
-                Icon(Icons.shopping_cart, color: Theme.of(context).accentColor),
-            onPressed: () {}),
+        trailing: Consumer<ProductsCart>(
+          builder: (ctx, cart, _) => IconButton(
+              icon: Icon(
+                  cart.itemInCart(product.id)
+                      ? Icons.shopping_cart
+                      : Icons.add_shopping_cart,
+                  color: Theme.of(context).accentColor),
+              onPressed: () {
+                cart.addItem(product.id, product.title, product.price);
+              }),
+        ),
       ),
     );
   }
