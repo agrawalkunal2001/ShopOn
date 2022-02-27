@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shopon/providers/products_cart.dart';
 import 'package:shopon/providers/products_order.dart';
+import 'package:shopon/screens/orders_screen.dart';
 import 'package:shopon/widgets/cart_item.dart' as ci;
 
 class CartScreen extends StatelessWidget {
@@ -40,6 +41,7 @@ class CartScreen extends StatelessWidget {
                   ),
                   TextButton(
                     onPressed: () {
+                      Navigator.of(context).pushNamed(OrdersScreen.routeName);
                       Provider.of<ProductsOrder>(context, listen: false)
                           .addOrder(
                               cart.items.values.toList(), cart.totalPrice);
