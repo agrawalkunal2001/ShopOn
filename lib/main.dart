@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shopon/providers/products_cart.dart';
+import 'package:shopon/providers/products_order.dart';
 import 'package:shopon/providers/products_provider.dart';
 import 'package:shopon/screens/cart_screen.dart';
 import 'package:shopon/screens/product_detail_screen.dart';
@@ -24,6 +25,9 @@ class MyApp extends StatelessWidget {
         ), // All child widgets can now set up a listener to this instance of the class.
         ChangeNotifierProvider(
           create: (ctx) => ProductsCart(),
+        ),
+        ChangeNotifierProvider(
+          create: (ctx) => ProductsOrder(),
         ),
       ],
       child: MaterialApp(
