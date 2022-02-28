@@ -57,6 +57,10 @@ class CartScreen extends StatelessWidget {
               ),
             ),
           ),
+          Text(
+            "(swipe right to delete)",
+            style: TextStyle(fontSize: 16, color: Colors.grey),
+          ),
           Expanded(
             child: ListView.builder(
               itemBuilder: (ctx, index) => ci.CartItem(

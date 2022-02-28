@@ -57,6 +57,20 @@ class ProductItem extends StatelessWidget {
                   color: Theme.of(context).accentColor),
               onPressed: () {
                 cart.addItem(product.id, product.title, product.price);
+                ScaffoldMessenger.of(context)
+                    .hideCurrentSnackBar(); // It hides the current snackbar before showing new snackbar immediately.
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      "Added item to cart!",
+                    ),
+                    duration: Duration(seconds: 3),
+                    action: SnackBarAction(
+                      label: "UNDO",
+                      onPressed: () {},
+                    ),
+                  ),
+                ); // Scaffold.of reaches out to the nearest widget controlling the page, which is the scaffold widget in product overview screen.
               }),
         ),
       ),
