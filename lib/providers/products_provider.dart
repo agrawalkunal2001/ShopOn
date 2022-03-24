@@ -52,8 +52,27 @@ class ProductsProvider
     return _items.firstWhere((element) => element.id == id);
   }
 
-  void addProducts() {
-    // _items.add(value);
+  void addProducts(Product product) {
+    final newProd = Product(
+        id: DateTime.now().toString(),
+        title: product.title,
+        price: product.price,
+        description: product.description,
+        imageURL: product.imageURL);
+    _items.add(newProd);
     notifyListeners(); // If we change data in this class, this will help us to communicate these changes to all the widgets.
+  }
+
+  void updateProducts(String id, Product newProduct) {
+    final index = _items.indexWhere((element) => element.id == id);
+    if (index >= 0) {
+      _items[index] = newProduct;
+    }
+    notifyListeners();
+  }
+
+  void deleteProducts(String id) {
+    _items.removeWhere((element) => element.id == id);
+    notifyListeners();
   }
 }
