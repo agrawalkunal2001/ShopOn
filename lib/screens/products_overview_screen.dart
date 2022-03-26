@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shopon/providers/products_cart.dart';
+import 'package:shopon/providers/products_provider.dart';
 import 'package:shopon/screens/cart_screen.dart';
 import 'package:shopon/widgets/app_drawer.dart';
 import 'package:shopon/widgets/badge.dart';
+import 'package:shopon/widgets/loading_spinner.dart';
 import 'package:shopon/widgets/products_grid.dart';
 
 enum FilterOptions { Favourites, All }
@@ -15,6 +17,38 @@ class ProductsOverviewScreen extends StatefulWidget {
 
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   var _showFavouritesOnly = false;
+  var _isInit = true;
+  var isLoading = false;
+
+  @override
+  void initState() {
+    // This will run first when the screen loads and will run only once.
+    // Provider.of<ProductsProvider>(context).fetchAndSetProducts(); // This will not work as .of(context) is not fully wired up here. It can work if we set listen: false.
+
+    // Future.delayed(Duration.zero).then((value) =>
+    //     {Provider.of<ProductsProvider>(context).fetchAndSetProducts()}); // This would work technically as the duration is set to zero but first the class will be initialised and then this will run.
+
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    // This will run after the widget tree has been initialised but before the build method runs for the first time. It runs multiple times.
+    if (_isInit) {
+      setState(() {
+        isLoading = true;
+      });
+      Provider.of<ProductsProvider>(context).fetchAndSetProducts().then((_) {
+        setState(() {
+          isLoading = false;
+        });
+      });
+    }
+
+    _isInit = false;
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,7 +88,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
         ],
       ),
       drawer: AppDrawer(),
-      body: ProductsGrid(_showFavouritesOnly),
+      body: isLoading ? LoadingSpinner() : ProductsGrid(_showFavouritesOnly),
     );
   }
 }
