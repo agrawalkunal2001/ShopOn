@@ -54,10 +54,10 @@ class ProductsProvider
     return _items.firstWhere((element) => element.id == id);
   }
 
-  void addProducts(String id, Product product) {
+  Future<void> addProducts(String id, Product product) {
     final url = Uri.parse(
         'https://shopon-dc94c-default-rtdb.firebaseio.com/products.json');
-    http
+    return http
         .post(url,
             body: json.encode({
               "title": product.title,
