@@ -126,6 +126,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
         ));
       },
     );
+
     // Navigator.of(context).pop(); // Pop is executed immediately after addProducts is triggerred which leads to delay in product showing up on the screen. It would be better if addProducts would return a future, so that pop can be executed inside '.then' function.
   }
 

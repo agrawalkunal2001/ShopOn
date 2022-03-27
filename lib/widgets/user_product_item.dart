@@ -30,8 +30,51 @@ class UserProductItem extends StatelessWidget {
                 icon: Icon(Icons.edit, color: Theme.of(context).primaryColor)),
             IconButton(
                 onPressed: () {
-                  Provider.of<ProductsProvider>(context, listen: false)
-                      .deleteProducts(id);
+                  showDialog(
+                    context: context,
+                    builder: (ctx) => AlertDialog(
+                      title: Text("Are you sure?"),
+                      content: Text("Do you want to delete this item?"),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(ctx).pop(false);
+                          },
+                          child: Text(
+                            "NO",
+                            style: TextStyle(fontSize: 17),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Provider.of<ProductsProvider>(context,
+                                    listen: false)
+                                .deleteProducts(id)
+                                .then((value) => {
+                                      Navigator.of(ctx).pop(true),
+                                      ScaffoldMessenger.of(context)
+                                          .hideCurrentSnackBar(), // It hides the current snackbar before showing new snackbar immediately.
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                        content: Text(
+                                          "Product deleted!",
+                                        ),
+                                        duration: Duration(seconds: 3),
+                                        action: SnackBarAction(
+                                          label: "UNDO",
+                                          onPressed: () {},
+                                        ),
+                                      ))
+                                    });
+                          },
+                          child: Text(
+                            "YES",
+                            style: TextStyle(fontSize: 17),
+                          ),
+                        )
+                      ],
+                    ),
+                  );
                 },
                 icon: Icon(Icons.delete, color: Theme.of(context).accentColor)),
           ],
