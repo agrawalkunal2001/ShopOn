@@ -7,6 +7,7 @@ class UserProductItem extends StatelessWidget {
   final String id;
   final String title;
   final String imageURL;
+  var isLoading = false;
 
   UserProductItem(
       {required this.id, required this.title, required this.imageURL});
@@ -64,7 +65,7 @@ class UserProductItem extends StatelessWidget {
                                           label: "UNDO",
                                           onPressed: () {},
                                         ),
-                                      ))
+                                      )),
                                     });
                           },
                           child: Text(

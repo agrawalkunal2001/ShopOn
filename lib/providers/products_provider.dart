@@ -116,6 +116,9 @@ class ProductsProvider
       final extractedData = json.decode(response.body) as Map<String,
           dynamic>; // When we decode the fetched data, we get a nested map. We get a map which contain string ids as keys and maps as values. These maps then contain the actual data like description and price.
       final List<Product> loadedProducts = [];
+      if (extractedData == null) {
+        return;
+      }
       extractedData.forEach((prodId /*key*/, prodData /*value*/) {
         loadedProducts.add(Product(
             id: prodId,
