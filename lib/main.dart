@@ -25,35 +25,45 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          // It allows us to register a class to listen the changes in widgets and when the class updtaes the listening widgets will update.
-          create: (ctx) => ProductsProvider(),
-        ), // All child widgets can now set up a listener to this instance of the class.
-        ChangeNotifierProvider(
-          create: (ctx) => ProductsCart(),
-        ),
-        ChangeNotifierProvider(
-          create: (ctx) => ProductsOrder(),
-        ),
-        ChangeNotifierProvider(
           create: (ctx) => Auth(),
         ),
+        ChangeNotifierProxyProvider<Auth, ProductsProvider>(
+          // Proxy provider is a generic class. It allows to set up a provider which itself depends on another provider. Thus auth provider should be the first one in the list and others can depend on it. Whenever auth changes, only this provider will be rebuilt.
+          update: (ctx, auth, previousProducts) => ProductsProvider(
+              auth.token as String,
+              previousProducts == null ? [] : previousProducts.items),
+          create: (ctx) => ProductsProvider("", []),
+        ),
+        ChangeNotifierProvider(
+          // It allows us to register a class to listen the changes in widgets and when the class updtaes the listening widgets will update.
+          create: (ctx) => ProductsCart(),
+        ), // All child widgets can now set up a listener to this instance of the class.
+        ChangeNotifierProxyProvider<Auth, ProductsOrder>(
+          update: (ctx, auth, previousOrders) => ProductsOrder(
+              auth.token as String,
+              previousOrders == null ? [] : previousOrders.orders),
+          create: (ctx) => ProductsOrder("", []),
+        ),
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: "ShopOn",
-        theme: ThemeData(
-            primarySwatch: Colors.teal,
-            accentColor: Colors.deepOrange,
-            fontFamily: "Lato"),
-        home: AuthScreen(),
-        routes: {
-          ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
-          CartScreen.routeName: (ctx) => CartScreen(),
-          OrdersScreen.routeName: (ctx) => OrdersScreen(),
-          UserProductsScreen.routeName: (ctx) => UserProductsScreen(),
-          EditProductScreen.routeName: (ctx) => EditProductScreen(),
-          AuthScreen.routeName: (ctx) => AuthScreen(),
-        },
+      child: Consumer<Auth>(
+        // This ensures that material app reruns whenever authentication status changes.
+        builder: (ctx, auth, _) => MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: "ShopOn",
+          theme: ThemeData(
+              primarySwatch: Colors.teal,
+              accentColor: Colors.deepOrange,
+              fontFamily: "Lato"),
+          home: auth.isAuth ? ProductsOverviewScreen() : AuthScreen(),
+          routes: {
+            ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
+            CartScreen.routeName: (ctx) => CartScreen(),
+            OrdersScreen.routeName: (ctx) => OrdersScreen(),
+            UserProductsScreen.routeName: (ctx) => UserProductsScreen(),
+            EditProductScreen.routeName: (ctx) => EditProductScreen(),
+            AuthScreen.routeName: (ctx) => AuthScreen(),
+          },
+        ),
       ),
     );
   }

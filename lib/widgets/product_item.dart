@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shopon/providers/auth.dart';
 import 'package:shopon/providers/product.dart';
 import 'package:shopon/providers/products_cart.dart';
 import 'package:shopon/screens/product_detail_screen.dart';
@@ -17,6 +18,7 @@ class ProductItem extends StatelessWidget {
     final cart = Provider.of<ProductsCart>(context,
         listen:
             false /* We do not want to rebuild this widget when cart provider updates*/);
+    final authData = Provider.of<Auth>(context, listen: false);
     return GridTile(
       child: GestureDetector(
         onTap: () {
@@ -39,7 +41,7 @@ class ProductItem extends StatelessWidget {
                       : Icons.favorite_border_outlined,
                   color: Theme.of(context).accentColor),
               onPressed: () {
-                product.toggleFavourite();
+                product.toggleFavourite(authData.token as String);
               }),
           child: Text(
               "Never changes!"), // It is the third argument in the builder method. It never changes.

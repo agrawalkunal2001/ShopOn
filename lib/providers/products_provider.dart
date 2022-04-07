@@ -13,6 +13,9 @@ class ProductsProvider
     ]; // Copy of _items so that we do not directly edit the original list
   } // Adding getter method as _items is a private property which cannot be accessed from outised this class
 
+  final String authToken;
+  ProductsProvider(this.authToken, this._items);
+
   List<Product> get favouriteItems {
     return _items.where((element) => element.isFavourite).toList();
   }
@@ -26,7 +29,7 @@ class ProductsProvider
 
     if (index >= 0) {
       final url = Uri.parse(
-          'https://shopon-dc94c-default-rtdb.firebaseio.com/products/$id.json');
+          'https://shopon-dc94c-default-rtdb.firebaseio.com/products/$id.json?auth=$authToken');
       return http
           .patch(url,
               body: json.encode({
@@ -43,7 +46,7 @@ class ProductsProvider
       });
     } else {
       final url = Uri.parse(
-          'https://shopon-dc94c-default-rtdb.firebaseio.com/products.json');
+          'https://shopon-dc94c-default-rtdb.firebaseio.com/products.json?auth=$authToken');
       return http
           .post(url,
               body: json.encode({
@@ -110,7 +113,7 @@ class ProductsProvider
 
   Future<void> fetchAndSetProducts() async {
     final url = Uri.parse(
-        'https://shopon-dc94c-default-rtdb.firebaseio.com/products.json');
+        'https://shopon-dc94c-default-rtdb.firebaseio.com/products.json?auth=$authToken');
     try {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String,
@@ -137,7 +140,7 @@ class ProductsProvider
 
   Future<void> deleteProducts(String id) {
     final url = Uri.parse(
-        'https://shopon-dc94c-default-rtdb.firebaseio.com/products/$id.json');
+        'https://shopon-dc94c-default-rtdb.firebaseio.com/products/$id.json?auth=$authToken');
     return http.delete(url).then((value) {
       _items.removeWhere((element) => element.id == id);
       notifyListeners();
