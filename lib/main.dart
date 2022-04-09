@@ -30,8 +30,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProxyProvider<Auth, ProductsProvider>(
           // Proxy provider is a generic class. It allows to set up a provider which itself depends on another provider. Thus auth provider should be the first one in the list and others can depend on it. Whenever auth changes, only this provider will be rebuilt.
           update: (ctx, auth, previousProducts) => ProductsProvider(
-              auth.token as String,
-              auth.userId,
+              auth.token ?? "",
+              auth.userId ?? "",
               previousProducts == null ? [] : previousProducts.items),
           create: (ctx) => ProductsProvider("", "", []),
         ),
@@ -41,8 +41,8 @@ class MyApp extends StatelessWidget {
         ), // All child widgets can now set up a listener to this instance of the class.
         ChangeNotifierProxyProvider<Auth, ProductsOrder>(
           update: (ctx, auth, previousOrders) => ProductsOrder(
-              auth.token as String,
-              auth.userId,
+              auth.token ?? "",
+              auth.userId ?? "",
               previousOrders == null ? [] : previousOrders.orders),
           create: (ctx) => ProductsOrder("", "", []),
         ),
@@ -56,7 +56,16 @@ class MyApp extends StatelessWidget {
               primarySwatch: Colors.teal,
               accentColor: Colors.deepOrange,
               fontFamily: "Lato"),
-          home: auth.isAuth ? ProductsOverviewScreen() : AuthScreen(),
+          home: auth.isAuth
+              ? ProductsOverviewScreen()
+              : FutureBuilder(
+                  builder: (ctx, authResultSnapshot) =>
+                      authResultSnapshot.connectionState ==
+                              ConnectionState.waiting
+                          ? Center(child: Text("Loading..."))
+                          : AuthScreen(),
+                  future: auth.autoLogin(),
+                ),
           routes: {
             ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
             CartScreen.routeName: (ctx) => CartScreen(),
