@@ -31,8 +31,9 @@ class MyApp extends StatelessWidget {
           // Proxy provider is a generic class. It allows to set up a provider which itself depends on another provider. Thus auth provider should be the first one in the list and others can depend on it. Whenever auth changes, only this provider will be rebuilt.
           update: (ctx, auth, previousProducts) => ProductsProvider(
               auth.token as String,
+              auth.userId,
               previousProducts == null ? [] : previousProducts.items),
-          create: (ctx) => ProductsProvider("", []),
+          create: (ctx) => ProductsProvider("", "", []),
         ),
         ChangeNotifierProvider(
           // It allows us to register a class to listen the changes in widgets and when the class updtaes the listening widgets will update.
@@ -41,8 +42,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProxyProvider<Auth, ProductsOrder>(
           update: (ctx, auth, previousOrders) => ProductsOrder(
               auth.token as String,
+              auth.userId,
               previousOrders == null ? [] : previousOrders.orders),
-          create: (ctx) => ProductsOrder("", []),
+          create: (ctx) => ProductsOrder("", "", []),
         ),
       ],
       child: Consumer<Auth>(

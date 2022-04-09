@@ -41,7 +41,8 @@ class ProductItem extends StatelessWidget {
                       : Icons.favorite_border_outlined,
                   color: Theme.of(context).accentColor),
               onPressed: () {
-                product.toggleFavourite(authData.token as String);
+                product.toggleFavourite(
+                    authData.token as String, authData.userId);
               }),
           child: Text(
               "Never changes!"), // It is the third argument in the builder method. It never changes.

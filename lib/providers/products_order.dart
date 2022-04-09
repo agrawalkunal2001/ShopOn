@@ -24,11 +24,12 @@ class ProductsOrder with ChangeNotifier {
   }
 
   final String token;
-  ProductsOrder(this.token, this._orders);
+  final String userId;
+  ProductsOrder(this.token, this.userId, this._orders);
 
   Future<void> fetchAndSetOrders() async {
     final url = Uri.parse(
-        'https://shopon-dc94c-default-rtdb.firebaseio.com/orders.json?auth=$token');
+        'https://shopon-dc94c-default-rtdb.firebaseio.com/orders/$userId.json?auth=$token');
     final response = await http.get(url);
     final extractedData = json.decode(response.body) as Map<String,
         dynamic>; // When we decode the fetched data, we get a nested map. We get a map which contain string ids as keys and maps as values. These maps then contain the actual data like description and price.
@@ -55,7 +56,7 @@ class ProductsOrder with ChangeNotifier {
 
   Future<void> addOrder(List<CartItem> cartProducts, int total) async {
     final url = Uri.parse(
-        'https://shopon-dc94c-default-rtdb.firebaseio.com/orders.json?auth=$token');
+        'https://shopon-dc94c-default-rtdb.firebaseio.com/orders/$userId.json?auth=$token');
     final timeStamp = DateTime
         .now(); // Creating this timestamp before http request to remove the delay between time recorded in local memory storage and database storage.
     final response = await http.post(url,

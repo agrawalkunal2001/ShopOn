@@ -14,7 +14,8 @@ class ProductsProvider
   } // Adding getter method as _items is a private property which cannot be accessed from outised this class
 
   final String authToken;
-  ProductsProvider(this.authToken, this._items);
+  final String userId;
+  ProductsProvider(this.authToken, this.userId, this._items);
 
   List<Product> get favouriteItems {
     return _items.where((element) => element.isFavourite).toList();
@@ -37,6 +38,7 @@ class ProductsProvider
                 "price": product.price,
                 "description": product.description,
                 "imageURL": product.imageURL,
+                "creatorId": userId,
               }))
           .then((value) {
         _items[index] = product;
@@ -54,7 +56,7 @@ class ProductsProvider
                 "price": product.price,
                 "description": product.description,
                 "imageURL": product.imageURL,
-                "isFavourite": product.isFavourite,
+                "creatorId": userId,
               }))
           .then((value) {
         final newProd = Product(
@@ -111,9 +113,12 @@ class ProductsProvider
   //     }
   //     notifyListeners();} catch(error){throw error;}
 
-  Future<void> fetchAndSetProducts() async {
+  Future<void> fetchAndSetProducts([bool filter = false]) async {
+    final filterString = filter
+        ? 'orderBy="creatorId"&equalTo="$userId"'
+        : ""; // This is done to show all products on products overview screen to all users but show selected products for each user on user products screen.
     final url = Uri.parse(
-        'https://shopon-dc94c-default-rtdb.firebaseio.com/products.json?auth=$authToken');
+        'https://shopon-dc94c-default-rtdb.firebaseio.com/products.json?auth=$authToken&$filterString');
     try {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String,
@@ -122,13 +127,17 @@ class ProductsProvider
       if (extractedData == null) {
         return;
       }
+      final favouriteResponse = await http.get(Uri.parse(
+          'https://shopon-dc94c-default-rtdb.firebaseio.com/userFavourites/$userId.json?auth=$authToken'));
+      final favouriteData = json.decode(favouriteResponse.body);
       extractedData.forEach((prodId /*key*/, prodData /*value*/) {
         loadedProducts.add(Product(
             id: prodId,
             title: prodData["title"],
             description: prodData["description"],
             price: prodData["price"],
-            isFavourite: prodData["isFavourite"],
+            isFavourite:
+                favouriteData == null ? false : favouriteData[prodId] ?? false,
             imageURL: prodData["imageURL"]));
       });
       _items = loadedProducts;

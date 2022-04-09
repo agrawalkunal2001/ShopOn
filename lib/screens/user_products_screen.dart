@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shopon/providers/products_provider.dart';
 import 'package:shopon/screens/edit_product_screen.dart';
 import 'package:shopon/widgets/app_drawer.dart';
+import 'package:shopon/widgets/loading_spinner.dart';
 import 'package:shopon/widgets/user_product_item.dart';
 
 class UserProductsScreen extends StatelessWidget {
@@ -10,7 +11,7 @@ class UserProductsScreen extends StatelessWidget {
 
   Future<void> _refreshProducts(BuildContext ctx) async {
     await Provider.of<ProductsProvider>(ctx, listen: false)
-        .fetchAndSetProducts();
+        .fetchAndSetProducts(true);
   }
 
   @override
@@ -29,24 +30,29 @@ class UserProductsScreen extends StatelessWidget {
         ],
       ),
       drawer: AppDrawer(),
-      body: RefreshIndicator(
-        onRefresh: () => _refreshProducts(context),
-        child: Padding(
-          padding: EdgeInsets.all(8),
-          child: ListView.builder(
-            itemBuilder: (_, index) => Column(
-              children: [
-                UserProductItem(
-                  id: productsData.items[index].id,
-                  title: productsData.items[index].title,
-                  imageURL: productsData.items[index].imageURL,
+      body: FutureBuilder(
+        future: _refreshProducts(context),
+        builder: (ctx, snapshot) => RefreshIndicator(
+          onRefresh: () => _refreshProducts(context),
+          child: Consumer<ProductsProvider>(
+            builder: (ctx, productsData, _) => Padding(
+              padding: EdgeInsets.all(8),
+              child: ListView.builder(
+                itemBuilder: (_, index) => Column(
+                  children: [
+                    UserProductItem(
+                      id: productsData.items[index].id,
+                      title: productsData.items[index].title,
+                      imageURL: productsData.items[index].imageURL,
+                    ),
+                    Divider(
+                      thickness: 2,
+                    ),
+                  ],
                 ),
-                Divider(
-                  thickness: 2,
-                ),
-              ],
+                itemCount: productsData.items.length,
+              ),
             ),
-            itemCount: productsData.items.length,
           ),
         ),
       ),
