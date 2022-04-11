@@ -24,9 +24,9 @@ class ProductsGrid extends StatelessWidget {
       ), // It defines how the grid should look like.
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          childAspectRatio: 3 / 2,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10),
+          childAspectRatio: 2.7 / 2,
+          crossAxisSpacing: 1,
+          mainAxisSpacing: 5),
       // It defines how the grid should be structured.
     );
   }

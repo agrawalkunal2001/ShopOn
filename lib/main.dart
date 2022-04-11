@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shopon/helpers/custom_route.dart';
 import 'package:shopon/providers/auth.dart';
 import 'package:shopon/providers/products_cart.dart';
 import 'package:shopon/providers/products_order.dart';
@@ -11,6 +12,7 @@ import 'package:shopon/screens/orders_screen.dart';
 import 'package:shopon/screens/product_detail_screen.dart';
 import 'package:shopon/screens/products_overview_screen.dart';
 import 'package:shopon/screens/user_products_screen.dart';
+import 'package:shopon/widgets/loading_spinner.dart';
 
 void main() {
   runApp(const MyApp());
@@ -31,7 +33,7 @@ class MyApp extends StatelessWidget {
           // Proxy provider is a generic class. It allows to set up a provider which itself depends on another provider. Thus auth provider should be the first one in the list and others can depend on it. Whenever auth changes, only this provider will be rebuilt.
           update: (ctx, auth, previousProducts) => ProductsProvider(
               auth.token ?? "",
-              auth.userId ?? "",
+              auth.userId,
               previousProducts == null ? [] : previousProducts.items),
           create: (ctx) => ProductsProvider("", "", []),
         ),
@@ -40,10 +42,8 @@ class MyApp extends StatelessWidget {
           create: (ctx) => ProductsCart(),
         ), // All child widgets can now set up a listener to this instance of the class.
         ChangeNotifierProxyProvider<Auth, ProductsOrder>(
-          update: (ctx, auth, previousOrders) => ProductsOrder(
-              auth.token ?? "",
-              auth.userId ?? "",
-              previousOrders == null ? [] : previousOrders.orders),
+          update: (ctx, auth, previousOrders) => ProductsOrder(auth.token ?? "",
+              auth.userId, previousOrders == null ? [] : previousOrders.orders),
           create: (ctx) => ProductsOrder("", "", []),
         ),
       ],
@@ -53,16 +53,21 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           title: "ShopOn",
           theme: ThemeData(
-              primarySwatch: Colors.teal,
-              accentColor: Colors.deepOrange,
-              fontFamily: "Lato"),
+            primarySwatch: Colors.teal,
+            accentColor: Colors.deepOrange,
+            fontFamily: "Lato",
+            pageTransitionsTheme: PageTransitionsTheme(builders: {
+              TargetPlatform.android: CustomPageTransitionBuilder(),
+              TargetPlatform.iOS: CustomPageTransitionBuilder()
+            }),
+          ),
           home: auth.isAuth
               ? ProductsOverviewScreen()
               : FutureBuilder(
                   builder: (ctx, authResultSnapshot) =>
                       authResultSnapshot.connectionState ==
                               ConnectionState.waiting
-                          ? Center(child: Text("Loading..."))
+                          ? LoadingSpinner()
                           : AuthScreen(),
                   future: auth.autoLogin(),
                 ),

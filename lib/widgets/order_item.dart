@@ -16,53 +16,62 @@ class _OrderItemState extends State<OrderItem> {
   var _expanded = false;
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.all(15),
-      child: Column(
-        children: <Widget>[
-          ListTile(
-            title: Text(
-              "\u{20B9}${widget.order.price}",
-              style: TextStyle(fontSize: 20),
-            ),
-            subtitle:
-                Text(DateFormat("dd/MM/yyyy hh::mm").format(widget.order.date)),
-            trailing: IconButton(
-              icon: Icon(_expanded ? Icons.expand_less : Icons.expand_more),
-              onPressed: () {
-                setState(() {
-                  _expanded = !_expanded;
-                });
-              },
-            ),
-          ),
-          if (_expanded)
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 4),
-              height: min(widget.order.products.length * 20.0 + 10, 100),
-              child: ListView(
-                children: widget.order.products
-                    .map((e) => Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(
-                              e.title,
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              "${e.quantity}X \u{20B9}${e.price}",
-                              style:
-                                  TextStyle(fontSize: 18, color: Colors.grey),
-                            ),
-                          ],
-                        ))
-                    .toList(),
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 300),
+      height:
+          _expanded ? min(widget.order.products.length * 20.0 + 115, 200) : 105,
+      child: Card(
+        margin: EdgeInsets.all(15),
+        child: Column(
+          children: <Widget>[
+            ListTile(
+              title: Text(
+                "\u{20B9}${widget.order.price}",
+                style: TextStyle(fontSize: 20),
+              ),
+              subtitle: Text(
+                  DateFormat("dd/MM/yyyy hh::mm").format(widget.order.date)),
+              trailing: IconButton(
+                icon: Icon(_expanded ? Icons.expand_less : Icons.expand_more),
+                onPressed: () {
+                  setState(() {
+                    _expanded = !_expanded;
+                  });
+                },
               ),
             ),
-        ],
+            AnimatedContainer(
+              duration: Duration(milliseconds: 300),
+              height: _expanded
+                  ? min(widget.order.products.length * 20.0 + 10, 100)
+                  : 0,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 4),
+                child: ListView(
+                  children: widget.order.products
+                      .map((e) => Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text(
+                                e.title,
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                "${e.quantity}X \u{20B9}${e.price}",
+                                style:
+                                    TextStyle(fontSize: 18, color: Colors.grey),
+                              ),
+                            ],
+                          ))
+                      .toList(),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
